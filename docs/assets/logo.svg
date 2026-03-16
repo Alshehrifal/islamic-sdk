@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1a0a2e"/>
+      <stop offset="100%" stop-color="#0d0518"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="45%" r="40%">
+      <stop offset="0%" stop-color="#d4a843" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#d4a843" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shimmer">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="196" fill="url(#bg)" stroke="#d4a843" stroke-width="1.5" stroke-opacity="0.6"/>
+  <circle cx="200" cy="200" r="196" fill="url(#glow)"/>
+
+  <!-- Outer geometric ring - 8-pointed star segments -->
+  <g transform="translate(200,200)" opacity="0.35" stroke="#d4a843" stroke-width="0.8" fill="none">
+    <circle r="168"/>
+    <circle r="158"/>
+    <!-- Tick marks -->
+    <line x1="0" y1="-158" x2="0" y2="-168"/>
+    <line x1="0" y1="158" x2="0" y2="168"/>
+    <line x1="-158" y1="0" x2="-168" y2="0"/>
+    <line x1="158" y1="0" x2="168" y2="0"/>
+    <line x1="-111.7" y1="-111.7" x2="-118.8" y2="-118.8"/>
+    <line x1="111.7" y1="-111.7" x2="118.8" y2="-118.8"/>
+    <line x1="-111.7" y1="111.7" x2="-118.8" y2="118.8"/>
+    <line x1="111.7" y1="111.7" x2="118.8" y2="118.8"/>
+  </g>
+
+  <!-- Islamic geometric star (8-pointed) -->
+  <g transform="translate(200,160)" filter="url(#shimmer)">
+    <polygon points="0,-52 12,-20 44,-20 20,0 30,32 0,14 -30,32 -20,0 -44,-20 -12,-20"
+             fill="none" stroke="#d4a843" stroke-width="1.2" stroke-opacity="0.5"/>
+    <!-- Inner 8-pointed star -->
+    <polygon points="0,-38 9,-14 32,-14 14,0 22,23 0,10 -22,23 -14,0 -32,-14 -9,-14"
+             fill="#d4a843" fill-opacity="0.08" stroke="#d4a843" stroke-width="1" stroke-opacity="0.6"/>
+  </g>
+
+  <!-- Crescent moon -->
+  <g filter="url(#softglow)">
+    <!-- Main moon body -->
+    <path d="M 200 90
+             a 72 72 0 0 1 0 144
+             a 52 52 0 0 0 0 -144 z"
+          fill="#d4a843" opacity="0.95"/>
+    <!-- Moon inner shadow for depth -->
+    <path d="M 200 90
+             a 72 72 0 0 1 0 144
+             a 52 52 0 0 0 0 -144 z"
+          fill="url(#bg)" opacity="0.15"/>
+  </g>
+
+  <!-- Star next to crescent -->
+  <g transform="translate(224,112)" filter="url(#softglow)">
+    <polygon points="0,-10 2.9,-4 9.5,-3.1 4.7,1.6 5.9,8.1 0,5 -5.9,8.1 -4.7,1.6 -9.5,-3.1 -2.9,-4"
+             fill="#d4a843" opacity="0.9"/>
+  </g>
+
+  <!-- Divider line -->
+  <line x1="120" y1="248" x2="280" y2="248" stroke="#d4a843" stroke-width="0.8" stroke-opacity="0.5"/>
+  <line x1="140" y1="252" x2="260" y2="252" stroke="#d4a843" stroke-width="0.4" stroke-opacity="0.3"/>
+
+  <!-- Text: islamic -->
+  <text x="200" y="282"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="22"
+        font-weight="400"
+        letter-spacing="6"
+        text-anchor="middle"
+        fill="#d4a843"
+        opacity="0.9">ISLAMIC</text>
+
+  <!-- Text: SDK -->
+  <text x="200" y="312"
+        font-family="'Courier New', monospace"
+        font-size="32"
+        font-weight="700"
+        letter-spacing="10"
+        text-anchor="middle"
+        fill="#ffffff"
+        opacity="0.95">SDK</text>
+
+  <!-- Dot decorations -->
+  <circle cx="200" cy="338" r="2" fill="#d4a843" opacity="0.6"/>
+  <circle cx="186" cy="338" r="1.2" fill="#d4a843" opacity="0.4"/>
+  <circle cx="214" cy="338" r="1.2" fill="#d4a843" opacity="0.4"/>
+
+  <!-- Corner geometric ornaments -->
+  <g opacity="0.25" stroke="#d4a843" stroke-width="0.8" fill="none">
+    <!-- Top-left -->
+    <path d="M 52 52 L 72 52 L 72 58 M 52 52 L 52 72 L 58 72"/>
+    <!-- Top-right -->
+    <path d="M 348 52 L 328 52 L 328 58 M 348 52 L 348 72 L 342 72"/>
+    <!-- Bottom-left -->
+    <path d="M 52 348 L 72 348 L 72 342 M 52 348 L 52 328 L 58 328"/>
+    <!-- Bottom-right -->
+    <path d="M 348 348 L 328 348 L 328 342 M 348 348 L 348 328 L 342 328"/>
+  </g>
+</svg>

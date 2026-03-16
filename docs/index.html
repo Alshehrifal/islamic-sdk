@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Islamic SDK — Claude Skill Collection</title>
+  <meta name="description" content="A modular Claude skill collection for Islamic calendar, prayer times, moon sighting and religious occasions. Works for any city, any country, Arabic & English."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --gold: #d4a843;
+      --gold-light: #e8c76a;
+      --gold-dim: #a07830;
+      --ink: #0d0518;
+      --deep: #1a0a2e;
+      --mid: #251540;
+      --surface: #1e1033;
+      --text: #e8e0f0;
+      --muted: #9585b0;
+      --accent: #7c4daa;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--text);
+      font-family: 'Libre Baskerville', Georgia, serif;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── Stars background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 72% 8%,  rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 90% 35%, rgba(212,168,67,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 85%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 75%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 82% 62%, rgba(212,168,67,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5%  90%, rgba(255,255,255,0.4) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: rgba(13, 5, 24, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(212, 168, 67, 0.2);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      text-decoration: none;
+      color: var(--gold);
+      font-family: 'Cinzel', serif;
+      font-size: .95rem;
+      letter-spacing: .1em;
+    }
+
+    .nav-moon { font-size: 1.3rem; }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      letter-spacing: .05em;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-glow {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(ellipse, rgba(212,168,67,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .logo-wrap {
+      width: 140px;
+      height: 140px;
+      margin-bottom: 2.5rem;
+      animation: float 6s ease-in-out infinite;
+      filter: drop-shadow(0 0 40px rgba(212,168,67,0.3));
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      letter-spacing: .25em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      opacity: .8;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: .04em;
+      color: #fff;
+      margin-bottom: .5rem;
+    }
+
+    .hero-title span {
+      color: var(--gold);
+      display: block;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted);
+      max-width: 560px;
+      margin: 1.5rem auto 2.5rem;
+      font-style: italic;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+      justify-content: center;
+      margin-bottom: 3rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .3rem .8rem;
+      border-radius: 999px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: .05em;
+      border: 1px solid;
+    }
+
+    .badge-gold  { border-color: rgba(212,168,67,.5);  color: var(--gold);   background: rgba(212,168,67,.07); }
+    .badge-green { border-color: rgba(76,175,80,.5);   color: #81c784;       background: rgba(76,175,80,.07); }
+    .badge-blue  { border-color: rgba(100,149,237,.5); color: #90caf9;       background: rgba(100,149,237,.07); }
+
+    .cta-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .75rem 1.8rem;
+      border-radius: 6px;
+      font-family: 'Cinzel', serif;
+      font-size: .85rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-decoration: none;
+      transition: all .25s;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--ink);
+      box-shadow: 0 0 30px rgba(212,168,67,.3);
+    }
+    .btn-primary:hover {
+      background: var(--gold-light);
+      box-shadow: 0 0 50px rgba(212,168,67,.5);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.2);
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* ── Arabic quote ── */
+    .arabic-quote {
+      margin-top: 4rem;
+      font-size: 1.4rem;
+      color: rgba(212,168,67,.5);
+      letter-spacing: .05em;
+      direction: rtl;
+    }
+
+    /* ── Section base ── */
+    section {
+      position: relative;
+      z-index: 1;
+      padding: 6rem 2rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      letter-spacing: .3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      opacity: .8;
+    }
+
+    .section-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+
+    .section-desc {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 600px;
+      margin-bottom: 3rem;
+    }
+
+    /* ── Skills grid ── */
+    .skills-section { background: var(--deep); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid rgba(212,168,67,.15);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .skill-card:hover {
+      border-color: rgba(212,168,67,.4);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.4);
+    }
+
+    .skill-card:hover::before { opacity: 1; }
+
+    .skill-icon {
+      font-size: 1.6rem;
+      margin-bottom: .75rem;
+      display: block;
+    }
+
+    .skill-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--gold);
+      letter-spacing: .05em;
+      margin-bottom: .4rem;
+    }
+
+    .skill-desc {
+      color: var(--text);
+      font-size: .9rem;
+      margin-bottom: .75rem;
+      line-height: 1.5;
+    }
+
+    .skill-triggers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+
+    .trigger {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .65rem;
+      padding: .2rem .5rem;
+      border-radius: 4px;
+      background: rgba(212,168,67,.08);
+      color: var(--muted);
+      border: 1px solid rgba(212,168,67,.15);
+    }
+
+    /* ── Principles ── */
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .principle {
+      padding: 1.8rem;
+      border-left: 2px solid var(--gold);
+      background: rgba(212,168,67,.04);
+      border-radius: 0 8px 8px 0;
+    }
+
+    .principle-num {
+      font-family: 'Cinzel', serif;
+      font-size: 2rem;
+      color: rgba(212,168,67,.25);
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: .5rem;
+    }
+
+    .principle h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      color: var(--gold);
+      margin-bottom: .5rem;
+    }
+
+    .principle p {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    /* ── Code block ── */
+    .code-section {
+      background: var(--mid);
+    }
+
+    .code-window {
+      background: #0a0614;
+      border: 1px solid rgba(212,168,67,.2);
+      border-radius: 10px;
+      overflow: hidden;
+      max-width: 720px;
+    }
+
+    .code-bar {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .75rem 1rem;
+      background: rgba(255,255,255,.03);
+      border-bottom: 1px solid rgba(212,168,67,.1);
+    }
+
+    .code-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+
+    .code-body {
+      padding: 1.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      line-height: 1.7;
+      overflow-x: auto;
+    }
+
+    .c-comment { color: #5a4a7a; }
+    .c-cmd     { color: var(--gold); }
+    .c-str     { color: #81c784; }
+    .c-key     { color: #90caf9; }
+    .c-out     { color: var(--muted); }
+
+    /* ── Stats ── */
+    .stats-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      margin: 3rem 0;
+    }
+
+    .stat {
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: 'Cinzel', serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      display: block;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: .85rem;
+      margin-top: .4rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid rgba(212,168,67,.15);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .footer-arabic {
+      font-size: 1.2rem;
+      color: rgba(212,168,67,.5);
+      margin-bottom: 1rem;
+      direction: rtl;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      list-style: none;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      letter-spacing: .05em;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+
+    .footer-copy {
+      color: rgba(255,255,255,.2);
+      font-size: .78rem;
+    }
+
+    /* ── Divider ── */
+    .ornament {
+      text-align: center;
+      color: rgba(212,168,67,.3);
+      font-size: 1.4rem;
+      letter-spacing: .5em;
+      margin: 2rem 0;
+    }
+
+    /* ── Scroll reveal ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.2rem; }
+      .nav-links { display: none; }
+      .hero { padding: 5rem 1.2rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-brand" href="#">
+    <span class="nav-moon">☾</span>
+    <span>ISLAMIC SDK</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#principles">Design</a></li>
+    <li><a href="#quickstart">Quick Start</a></li>
+    <li><a href="https://github.com/alshas0e/islamic-sdk" target="_blank">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-glow"></div>
+
+  <img class="logo-wrap" src="assets/logo.svg" alt="Islamic SDK"/>
+
+  <p class="hero-eyebrow">Claude Skill Collection</p>
+
+  <h1 class="hero-title">
+    Islamic
+    <span>SDK</span>
+  </h1>
+
+  <p class="hero-subtitle">
+    10 modular AI skills for prayer times, Hijri calendar, moon sighting &
+    Islamic occasions — for any city, any country, in Arabic & English.
+  </p>
+
+  <div class="hero-badges">
+    <span class="badge badge-gold">☾ 10 Skills</span>
+    <span class="badge badge-green">✓ 62 Tests</span>
+    <span class="badge badge-blue">∅ No API Key Required</span>
+    <span class="badge badge-gold">🌍 Global Coverage</span>
+    <span class="badge badge-green">ع Arabic + EN</span>
+  </div>
+
+  <div class="cta-group">
+    <a class="btn btn-primary" href="https://github.com/alshas0e/islamic-sdk/releases">
+      ↓ Download Skills
+    </a>
+    <a class="btn btn-outline" href="https://github.com/alshas0e/islamic-sdk">
+      ⊹ View on GitHub
+    </a>
+  </div>
+
+  <p class="arabic-quote">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+</section>
+
+<!-- Stats -->
+<section style="padding: 3rem 2rem; background: var(--deep);">
+  <div class="container">
+    <div class="stats-row reveal">
+      <div class="stat">
+        <span class="stat-number">10</span>
+        <div class="stat-label">Skill Modules</div>
+      </div>
+      <div class="stat">
+        <span class="stat-number">62</span>
+        <div class="stat-label">Tests Written</div>
+      </div>
+      <div class="stat">
+        <span class="stat-number">0</span>
+        <div class="stat-label">API Keys Needed</div>
+      </div>
+      <div class="stat">
+        <span class="stat-number">∞</span>
+        <div class="stat-label">Cities Supported</div>
+      </div>
+      <div class="stat">
+        <span class="stat-number">57</span>
+        <div class="stat-label">Muslim Countries</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Skills -->
+<section id="skills" class="skills-section">
+  <div class="container">
+    <p class="section-label reveal">Skill Library</p>
+    <h2 class="section-title reveal">10 focused modules</h2>
+    <p class="section-desc reveal">
+      Each skill handles one domain precisely — no monolithic god-objects.
+      Install only what you need, or deploy the full SDK.
+    </p>
+
+    <div class="skills-grid">
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">🕌</span>
+        <div class="skill-name">islamic-prayer-times</div>
+        <p class="skill-desc">Daily salah schedule with Hijri date, timezone, and calculation method for any city.</p>
+        <div class="skill-triggers">
+          <span class="trigger">prayer times Cairo</span>
+          <span class="trigger">متى المغرب في جدة؟</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">🌙</span>
+        <div class="skill-name">islamic-qiyam</div>
+        <p class="skill-desc">Calculates the last-third-of-night window for Tahajjud prayer based on Maghrib and Fajr.</p>
+        <div class="skill-triggers">
+          <span class="trigger">Tahajjud time tonight</span>
+          <span class="trigger">متى وقت القيام؟</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">📅</span>
+        <div class="skill-name">islamic-hijri</div>
+        <p class="skill-desc">Bidirectional Gregorian ↔ Hijri conversion. Works entirely offline — no network needed.</p>
+        <div class="skill-triggers">
+          <span class="trigger">convert March 20 to Hijri</span>
+          <span class="trigger">1 شوال 1447 ميلادي؟</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">🌒</span>
+        <div class="skill-name">islamic-hilal</div>
+        <p class="skill-desc">Searches for official moon sighting announcements per country. Falls back to Umm al-Qura with a clear "unconfirmed" label.</p>
+        <div class="skill-triggers">
+          <span class="trigger">هلال رمضان في سوريا</span>
+          <span class="trigger">did Morocco sight hilal?</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">🎉</span>
+        <div class="skill-name">islamic-eid</div>
+        <p class="skill-desc">Eid al-Fitr and Eid al-Adha dates with estimated prayer time (Sunrise + 15 min). Hilal-aware per country.</p>
+        <div class="skill-triggers">
+          <span class="trigger">Eid date Turkey</span>
+          <span class="trigger">متى صلاة العيد في الرياض؟</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">🕋</span>
+        <div class="skill-name">islamic-arafah</div>
+        <p class="skill-desc">Yawm Arafah (9 Dhul Hijjah) date, prayer times, and fasting virtue. Always follows Saudi Arabia's announcement.</p>
+        <div class="skill-triggers">
+          <span class="trigger">when is Arafah 2026?</span>
+          <span class="trigger">فضل صيام يوم عرفة</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">📿</span>
+        <div class="skill-name">islamic-ashura</div>
+        <p class="skill-desc">Ashura (10 Muharram) and Tasu'a (9 Muharram) dates with fasting virtues. Follows local country hilal.</p>
+        <div class="skill-triggers">
+          <span class="trigger">Ashura 2026</span>
+          <span class="trigger">متى عاشوراء 1447؟</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">📖</span>
+        <div class="skill-name">islamic-day-info</div>
+        <p class="skill-desc">Islamic virtues and recommended acts for each weekday — Friday Jumu'ah, Monday fasting, and more.</p>
+        <div class="skill-triggers">
+          <span class="trigger">فضائل يوم الجمعة</span>
+          <span class="trigger">what's special about Monday?</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">📆</span>
+        <div class="skill-name">islamic-next-events</div>
+        <p class="skill-desc">Dashboard of upcoming Islamic events (Eid, Arafah) sorted by days remaining, with date status.</p>
+        <div class="skill-triggers">
+          <span class="trigger">upcoming Islamic events</span>
+          <span class="trigger">المناسبات الإسلامية القادمة</span>
+        </div>
+      </div>
+
+      <div class="skill-card reveal">
+        <span class="skill-icon">🗞️</span>
+        <div class="skill-name">islamic-news</div>
+        <p class="skill-desc">Google News search for Islamic announcements in Arabic or English, plus a full webpage reader.</p>
+        <div class="skill-triggers">
+          <span class="trigger">هل أُعلن هلال شوال؟</span>
+          <span class="trigger">search spa.gov.sa Eid</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Principles -->
+<section id="principles">
+  <div class="container">
+    <p class="section-label reveal">Design Principles</p>
+    <h2 class="section-title reveal">Built for accuracy</h2>
+    <p class="section-desc reveal">
+      Islamic dates are sensitive. This SDK is built around honesty —
+      it never presents a calculated date as an official announcement.
+    </p>
+
+    <div class="principles-grid">
+      <div class="principle reveal">
+        <div class="principle-num">01</div>
+        <h3>Hilal-Aware</h3>
+        <p>Every month-start date searches for official country announcements before falling back to Umm al-Qura calculation.</p>
+      </div>
+      <div class="principle reveal">
+        <div class="principle-num">02</div>
+        <h3>Transparent Status</h3>
+        <p>Every date includes <code>date_status</code>: either <em>"announced"</em> with a source URL, or <em>"calculated (unconfirmed)"</em>.</p>
+      </div>
+      <div class="principle reveal">
+        <div class="principle-num">03</div>
+        <h3>Arafah = Saudi Only</h3>
+        <p>Yawm Arafah always follows Saudi Arabia's Dhul Hijjah. Hajj is in Mecca — this is not negotiable.</p>
+      </div>
+      <div class="principle reveal">
+        <div class="principle-num">04</div>
+        <h3>DRY Architecture</h3>
+        <p>All API calls, Hijri math, and news scraping live in <code>shared/</code>. Skills are thin wrappers over solid utilities.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Start -->
+<section id="quickstart" class="code-section">
+  <div class="container">
+    <p class="section-label reveal">Quick Start</p>
+    <h2 class="section-title reveal">Up in 60 seconds</h2>
+
+    <div class="code-window reveal">
+      <div class="code-bar">
+        <div class="code-dot" style="background:#ff5f57"></div>
+        <div class="code-dot" style="background:#febc2e"></div>
+        <div class="code-dot" style="background:#28c840"></div>
+        <span style="font-family:monospace;font-size:.72rem;color:#5a4a7a;margin-left:.5rem">terminal</span>
+      </div>
+      <div class="code-body">
+<span class="c-comment"># Install the single dependency</span>
+<span class="c-cmd">pip install hijridate</span>
+
+<span class="c-comment"># Prayer times for any city</span>
+<span class="c-cmd">python</span> <span class="c-str">islamic-prayer-times/scripts/prayer_times.py</span> <span class="c-key">--city</span> Riyadh
+
+<span class="c-comment"># Convert a date to Hijri</span>
+<span class="c-cmd">python</span> <span class="c-str">islamic-hijri/scripts/hijri.py</span> <span class="c-key">--date</span> <span class="c-str">20-03-2026</span>
+
+<span class="c-comment"># When is Eid al-Fitr in Istanbul?</span>
+<span class="c-cmd">python</span> <span class="c-str">islamic-eid/scripts/eid.py</span> <span class="c-key">--city</span> Istanbul <span class="c-key">--country</span> Turkey <span class="c-key">--eid</span> fitr
+
+<span class="c-comment"># Run all unit tests (offline, always safe)</span>
+<span class="c-cmd">python run_tests.py</span>
+
+<span class="c-out">----------------------------------------------------------------------
+Ran 62 tests in 0.96s  ·  OK (skipped=56)</span>
+      </div>
+    </div>
+
+    <div style="margin-top:2.5rem" class="reveal">
+      <a class="btn btn-primary" href="https://github.com/alshas0e/islamic-sdk" style="display:inline-flex">
+        View Full Documentation →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p class="footer-arabic">اللَّهُمَّ بَارِكْ لَنَا فِي رَجَبَ وَشَعْبَانَ وَبَلِّغْنَا رَمَضَانَ</p>
+  <ul class="footer-links">
+    <li><a href="https://github.com/alshas0e/islamic-sdk">GitHub</a></li>
+    <li><a href="https://github.com/alshas0e/islamic-sdk/releases">Releases</a></li>
+    <li><a href="https://github.com/alshas0e/islamic-sdk/blob/main/CONTRIBUTING.md">Contributing</a></li>
+    <li><a href="https://github.com/alshas0e/islamic-sdk/blob/main/LICENSE">MIT License</a></li>
+  </ul>
+  <p class="footer-copy">Made with ☾ for the global Muslim community · Open Source · MIT License</p>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver(
+    entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  );
+  document.querySelectorAll('.reveal').forEach((el, i) => {
+    el.style.transitionDelay = (i % 4) * 0.08 + 's';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
