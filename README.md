@@ -10,11 +10,11 @@
 [![Tests](https://img.shields.io/badge/Tests-62%20passing-2e7d32?style=flat-square&logo=pytest&logoColor=white)](./run_tests.py)
 [![Skills](https://img.shields.io/badge/Skills-10%20modules-d4a843?style=flat-square)](./README.md#skills)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](./LICENSE)
-[![GitHub Pages](https://img.shields.io/badge/Docs-Live-4CAF50?style=flat-square&logo=github)](https://alshas0e.github.io/islamic-sdk)
+[![GitHub Pages](https://img.shields.io/badge/Docs-Live-4CAF50?style=flat-square&logo=github)](https://Alshehrifal.github.io/islamic-sdk)
 
 *Works for any city · Any country · Arabic & English*
 
-[**Live Demo**](https://alshas0e.github.io/islamic-sdk) · [**Skills Reference**](#skills) · [**Quick Start**](#quick-start) · [**Contributing**](CONTRIBUTING.md)
+[**Live Demo**](https://Alshehrifal.github.io/islamic-sdk) · [**Skills Reference**](#skills) · [**Quick Start**](#quick-start) · [**Contributing**](CONTRIBUTING.md)
 
 </div>
 
@@ -56,7 +56,7 @@ User: "هل أُعلن هلال شوال في المغرب؟"
 
 ### Install a skill
 
-Download the `.skill` files from [Releases](https://github.com/alshas0e/islamic-sdk/releases) and upload via the Claude skill manager.
+Download the `.skill` files from [Releases](https://github.com/Alshehrifal/islamic-sdk/releases) and upload via the Claude skill manager.
 
 The `shared.skill` package must be installed alongside the other skills — it provides the shared calendar, API, and news utilities all skills depend on.
 
