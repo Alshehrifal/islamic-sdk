@@ -179,6 +179,6 @@ MIT License — see [LICENSE](LICENSE)
 
 Made with ☾ for the global Muslim community
 
-*اللَّهُمَّ بَارِكْ لَنَا فِي رَجَبَ وَشَعْبَانَ وَبَلِّغْنَا رَمَضَانَ*
+*اللَّهُمَّ بَارِكْ لَنَا فِي رَمَضَانَ*
 
 </div>
